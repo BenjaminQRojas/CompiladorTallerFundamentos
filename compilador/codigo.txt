@@ -1,3 +1,4 @@
-var x = 5;
-
+VAR x = 5;
+VAR y = 3;
+x = x + y;
 print(x);
