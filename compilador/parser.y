@@ -56,6 +56,7 @@ void set_variable_value(const char *name, int value);
 // Evaluación y ejecución del AST
 int evaluate_ast(ASTNode *node);
 void execute_ast(ASTNode *node);
+
 %}
 
 %union {
@@ -126,12 +127,185 @@ expression:
 
 %%
 
-void yyerror(const char *s) {
-    fprintf(stderr, "Error: %s\n", s);
+// Implementación de las funciones para crear nodos del AST
+
+ASTNode *create_number_node(int value) {
+    ASTNode *node = malloc(sizeof(ASTNode));
+    node->type = NUMBER_NODE;
+    node->number_value = value;
+    return node;
 }
 
-int main(int argc, char *argv[]) {
-    yyin = argc > 1 ? fopen(argv[1], "r") : stdin;
+ASTNode *create_identifier_node(const char *name) {
+    ASTNode *node = malloc(sizeof(ASTNode));
+    node->type = IDENTIFIER_NODE;
+    node->identifier_name = strdup(name);
+    return node;
+}
+
+ASTNode *create_binary_op_node(char operator, ASTNode *left, ASTNode *right) {
+    ASTNode *node = malloc(sizeof(ASTNode));
+    node->type = BINARY_OP_NODE;
+    node->binary_op.operator = operator;
+    node->binary_op.left = left;
+    node->binary_op.right = right;
+    return node;
+}
+
+ASTNode *create_assignment_node(const char *name, ASTNode *value) {
+    ASTNode *node = malloc(sizeof(ASTNode));
+    node->type = ASSIGNMENT_NODE;
+    node->assignment.name = strdup(name);
+    node->assignment.value = value;
+    return node;
+}
+
+ASTNode *create_if_node(ASTNode *condition, ASTNode *true_block) {
+    ASTNode *node = malloc(sizeof(ASTNode));
+    node->type = IF_NODE;
+    node->if_statement.condition = condition;
+    node->if_statement.true_block = true_block;
+    return node;
+}
+
+ASTNode *create_print_node(ASTNode *expression) {
+    ASTNode *node = malloc(sizeof(ASTNode));
+    node->type = PRINT_NODE;
+    node->print_expression = expression;
+    return node;
+}
+
+ASTNode *create_block_node(ASTNode **statements, int count) {
+    ASTNode *node = malloc(sizeof(ASTNode));
+    node->type = BLOCK_NODE;
+    node->block.statements = statements;
+    node->block.count = count;
+    return node;
+}
+
+// Gestión de memoria del AST
+void free_ast(ASTNode *node) {
+    if (!node) return;
+    switch (node->type) {
+        case NUMBER_NODE:
+        case IDENTIFIER_NODE:
+            free(node->identifier_name);
+            break;
+        case BINARY_OP_NODE:
+            free_ast(node->binary_op.left);
+            free_ast(node->binary_op.right);
+            break;
+        case ASSIGNMENT_NODE:
+            free(node->assignment.name);
+            free_ast(node->assignment.value);
+            break;
+        case IF_NODE:
+            free_ast(node->if_statement.condition);
+            free_ast(node->if_statement.true_block);
+            break;
+        case PRINT_NODE:
+            free_ast(node->print_expression);
+            break;
+        case BLOCK_NODE:
+            for (int i = 0; i < node->block.count; i++) {
+                free_ast(node->block.statements[i]);
+            }
+            free(node->block.statements);
+            break;
+    }
+    free(node);
+}
+
+// Evaluación y ejecución del AST
+
+int evaluate_ast(ASTNode *node) {
+    switch (node->type) {
+        case NUMBER_NODE:
+            return node->number_value;
+        case IDENTIFIER_NODE:
+            return get_variable_value(node->identifier_name);
+        case BINARY_OP_NODE:
+            switch (node->binary_op.operator) {
+                case '+':
+                    return evaluate_ast(node->binary_op.left) + evaluate_ast(node->binary_op.right);
+                case '-':
+                    return evaluate_ast(node->binary_op.left) - evaluate_ast(node->binary_op.right);
+                case '*':
+                    return evaluate_ast(node->binary_op.left) * evaluate_ast(node->binary_op.right);
+                case '/':
+                    return evaluate_ast(node->binary_op.left) / evaluate_ast(node->binary_op.right);
+                case '=':
+                    return evaluate_ast(node->binary_op.left) == evaluate_ast(node->binary_op.right);
+                case '!':
+                    return evaluate_ast(node->binary_op.left) != evaluate_ast(node->binary_op.right);
+                case '<':
+                    return evaluate_ast(node->binary_op.left) < evaluate_ast(node->binary_op.right);
+                case '>':
+                    return evaluate_ast(node->binary_op.left) > evaluate_ast(node->binary_op.right);
+                case 'l':
+                    return evaluate_ast(node->binary_op.left) <= evaluate_ast(node->binary_op.right);
+                case 'g':
+                    return evaluate_ast(node->binary_op.left) >= evaluate_ast(node->binary_op.right);
+            }
+        default:
+            return 0;
+    }
+}
+
+void execute_ast(ASTNode *node) {
+    // Aquí debes implementar la ejecución de los nodos de acuerdo con su tipo.
+    switch (node->type) {
+        case ASSIGNMENT_NODE:
+            set_variable_value(node->assignment.name, evaluate_ast(node->assignment.value));
+            break;
+        case IF_NODE:
+            if (evaluate_ast(node->if_statement.condition)) {
+                execute_ast(node->if_statement.true_block);
+            }
+            break;
+        case PRINT_NODE:
+            printf("%d\n", evaluate_ast(node->print_expression));
+            break;
+        default:
+            break;
+    }
+}
+
+// Funciones para manejar variables
+
+int get_variable_value(const char *name) {
+    for (int i = 0; i < variable_count; i++) {
+        if (strcmp(variables[i].name, name) == 0) {
+            return variables[i].value;
+        }
+    }
+    return 0; // Si no se encuentra la variable
+}
+
+void set_variable_value(const char *name, int value) {
+    for (int i = 0; i < variable_count; i++) {
+        if (strcmp(variables[i].name, name) == 0) {
+            variables[i].value = value;
+            return;
+        }
+    }
+    // Si no existe la variable, la agregamos
+    if (variable_count < MAX_VARIABLES) {
+        variables[variable_count].name = strdup(name);
+        variables[variable_count].value = value;
+        variable_count++;
+    }
+}
+
+int main(int argc, char **argv) {
+    if (argc > 1) {
+        yyin = fopen(argv[1], "r");
+        if (!yyin) {
+            fprintf(stderr, "Error opening file: %s\n", argv[1]);
+            return 1;
+        }
+    }
+
     yyparse();
     return 0;
 }
