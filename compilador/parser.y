@@ -297,6 +297,10 @@ void set_variable_value(const char *name, int value) {
     }
 }
 
+void yyerror(const char *s) {
+    fprintf(stderr, "Error de sintaxis: %s\n", s);
+}
+
 int main(int argc, char **argv) {
     if (argc > 1) {
         yyin = fopen(argv[1], "r");
