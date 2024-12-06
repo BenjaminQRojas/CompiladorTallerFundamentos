@@ -73,6 +73,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "parser.tab.h"
 
 // Declaraciones externas
 extern FILE *yyin;
@@ -128,10 +129,41 @@ void set_variable_value(const char *name, int value);
 int evaluate_ast(ASTNode *node);
 void execute_ast(ASTNode *node);
 
+// Función yyerror para manejo de errores
+void yyerror(const char *s) {
+    fprintf(stderr, "Error de sintaxis: %s\n", s);
+}
+
+int main(int argc, char *argv[]) {
+    // Verificar si se pasa un archivo de entrada como argumento
+    if (argc > 1) {
+        yyin = fopen(argv[1], "r");
+        if (!yyin) {
+            fprintf(stderr, "Error al abrir el archivo %s\n", argv[1]);
+            return 1;
+        }
+    } else {
+        yyin = stdin;  // Si no hay archivo, usar la entrada estándar
+    }
+
+    // Llamar al parser y verificar si hubo errores
+    if (yyparse() == 0) {
+        printf("Análisis sintáctico exitoso\n");
+    } else {
+        printf("Error en el análisis sintáctico\n");
+    }
+
+    // Cerrar el archivo si se abrió
+    if (yyin != stdin) {
+        fclose(yyin);
+    }
+
+    return 0;
+}
 
 
 /* Line 189 of yacc.c  */
-#line 135 "parser.tab.c"
+#line 167 "parser.tab.c"
 
 /* Enabling traces.  */
 #ifndef YYDEBUG
@@ -184,7 +216,7 @@ typedef union YYSTYPE
 {
 
 /* Line 214 of yacc.c  */
-#line 62 "parser.y"
+#line 94 "parser.y"
 
     int ival;
     char *sval;
@@ -193,7 +225,7 @@ typedef union YYSTYPE
 
 
 /* Line 214 of yacc.c  */
-#line 197 "parser.tab.c"
+#line 229 "parser.tab.c"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
@@ -205,7 +237,7 @@ typedef union YYSTYPE
 
 
 /* Line 264 of yacc.c  */
-#line 209 "parser.tab.c"
+#line 241 "parser.tab.c"
 
 #ifdef short
 # undef short
@@ -498,9 +530,9 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    84,    84,    85,    89,    90,    91,    92,    96,   100,
-     103,   113,   114,   115,   116,   117,   118,   119,   120,   121,
-     122,   123,   124,   125
+       0,   116,   116,   117,   121,   122,   123,   124,   128,   132,
+     135,   145,   146,   147,   148,   149,   150,   151,   152,   153,
+     154,   155,   156,   157
 };
 #endif
 
@@ -1440,56 +1472,56 @@ yyreduce:
         case 2:
 
 /* Line 1455 of yacc.c  */
-#line 84 "parser.y"
+#line 116 "parser.y"
     { (yyval.node) = NULL; /* Asignar NULL en caso de que no haya contenido */ ;}
     break;
 
   case 3:
 
 /* Line 1455 of yacc.c  */
-#line 85 "parser.y"
+#line 117 "parser.y"
     { execute_ast((yyvsp[(2) - (2)].node)); free_ast((yyvsp[(2) - (2)].node)); ;}
     break;
 
   case 4:
 
 /* Line 1455 of yacc.c  */
-#line 89 "parser.y"
+#line 121 "parser.y"
     { (yyval.node) = create_assignment_node((yyvsp[(2) - (5)].sval), (yyvsp[(4) - (5)].node)); ;}
     break;
 
   case 5:
 
 /* Line 1455 of yacc.c  */
-#line 90 "parser.y"
+#line 122 "parser.y"
     { (yyval.node) = create_assignment_node((yyvsp[(1) - (4)].sval), (yyvsp[(3) - (4)].node)); ;}
     break;
 
   case 6:
 
 /* Line 1455 of yacc.c  */
-#line 91 "parser.y"
+#line 123 "parser.y"
     { (yyval.node) = create_if_node((yyvsp[(3) - (5)].node), (yyvsp[(5) - (5)].node)); ;}
     break;
 
   case 7:
 
 /* Line 1455 of yacc.c  */
-#line 92 "parser.y"
+#line 124 "parser.y"
     { (yyval.node) = create_print_node((yyvsp[(3) - (5)].node)); ;}
     break;
 
   case 8:
 
 /* Line 1455 of yacc.c  */
-#line 96 "parser.y"
+#line 128 "parser.y"
     { (yyval.node) = create_block_node((yyvsp[(2) - (3)].node)->block.statements, (yyvsp[(2) - (3)].node)->block.count); ;}
     break;
 
   case 9:
 
 /* Line 1455 of yacc.c  */
-#line 100 "parser.y"
+#line 132 "parser.y"
     {
         (yyval.node) = create_block_node((ASTNode **)&(yyvsp[(1) - (1)].node), 1);
     ;}
@@ -1498,7 +1530,7 @@ yyreduce:
   case 10:
 
 /* Line 1455 of yacc.c  */
-#line 103 "parser.y"
+#line 135 "parser.y"
     {
         int count = (yyvsp[(1) - (2)].node)->block.count + 1;
         (yyvsp[(1) - (2)].node)->block.statements = realloc((yyvsp[(1) - (2)].node)->block.statements, count * sizeof(ASTNode *));
@@ -1511,98 +1543,98 @@ yyreduce:
   case 11:
 
 /* Line 1455 of yacc.c  */
-#line 113 "parser.y"
+#line 145 "parser.y"
     { (yyval.node) = create_number_node((yyvsp[(1) - (1)].ival)); ;}
     break;
 
   case 12:
 
 /* Line 1455 of yacc.c  */
-#line 114 "parser.y"
+#line 146 "parser.y"
     { (yyval.node) = create_identifier_node((yyvsp[(1) - (1)].sval)); ;}
     break;
 
   case 13:
 
 /* Line 1455 of yacc.c  */
-#line 115 "parser.y"
+#line 147 "parser.y"
     { (yyval.node) = create_binary_op_node('+', (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node)); ;}
     break;
 
   case 14:
 
 /* Line 1455 of yacc.c  */
-#line 116 "parser.y"
+#line 148 "parser.y"
     { (yyval.node) = create_binary_op_node('-', (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node)); ;}
     break;
 
   case 15:
 
 /* Line 1455 of yacc.c  */
-#line 117 "parser.y"
+#line 149 "parser.y"
     { (yyval.node) = create_binary_op_node('*', (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node)); ;}
     break;
 
   case 16:
 
 /* Line 1455 of yacc.c  */
-#line 118 "parser.y"
+#line 150 "parser.y"
     { (yyval.node) = create_binary_op_node('/', (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node)); ;}
     break;
 
   case 17:
 
 /* Line 1455 of yacc.c  */
-#line 119 "parser.y"
+#line 151 "parser.y"
     { (yyval.node) = create_binary_op_node('=', (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node)); ;}
     break;
 
   case 18:
 
 /* Line 1455 of yacc.c  */
-#line 120 "parser.y"
+#line 152 "parser.y"
     { (yyval.node) = create_binary_op_node('!', (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node)); ;}
     break;
 
   case 19:
 
 /* Line 1455 of yacc.c  */
-#line 121 "parser.y"
+#line 153 "parser.y"
     { (yyval.node) = create_binary_op_node('<', (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node)); ;}
     break;
 
   case 20:
 
 /* Line 1455 of yacc.c  */
-#line 122 "parser.y"
+#line 154 "parser.y"
     { (yyval.node) = create_binary_op_node('>', (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node)); ;}
     break;
 
   case 21:
 
 /* Line 1455 of yacc.c  */
-#line 123 "parser.y"
+#line 155 "parser.y"
     { (yyval.node) = create_binary_op_node('l', (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node)); ;}
     break;
 
   case 22:
 
 /* Line 1455 of yacc.c  */
-#line 124 "parser.y"
+#line 156 "parser.y"
     { (yyval.node) = create_binary_op_node('g', (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node)); ;}
     break;
 
   case 23:
 
 /* Line 1455 of yacc.c  */
-#line 125 "parser.y"
+#line 157 "parser.y"
     { (yyval.node) = (yyvsp[(2) - (3)].node); ;}
     break;
 
 
 
 /* Line 1455 of yacc.c  */
-#line 1606 "parser.tab.c"
+#line 1638 "parser.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1814,13 +1846,17 @@ yyreturn:
 
 
 /* Line 1675 of yacc.c  */
-#line 128 "parser.y"
+#line 160 "parser.y"
 
 
 // Implementación de las funciones para crear nodos del AST
 
 ASTNode *create_number_node(int value) {
     ASTNode *node = malloc(sizeof(ASTNode));
+    if (!node) {
+        perror("Error al asignar memoria para el nodo");
+        exit(EXIT_FAILURE);
+    }
     node->type = NUMBER_NODE;
     node->number_value = value;
     return node;
@@ -1828,6 +1864,10 @@ ASTNode *create_number_node(int value) {
 
 ASTNode *create_identifier_node(const char *name) {
     ASTNode *node = malloc(sizeof(ASTNode));
+    if (!node) {
+        perror("Error al asignar memoria para el nodo");
+        exit(EXIT_FAILURE);
+    }
     node->type = IDENTIFIER_NODE;
     node->identifier_name = strdup(name);
     return node;
@@ -1835,6 +1875,10 @@ ASTNode *create_identifier_node(const char *name) {
 
 ASTNode *create_binary_op_node(char operator, ASTNode *left, ASTNode *right) {
     ASTNode *node = malloc(sizeof(ASTNode));
+    if (!node) {
+        perror("Error al asignar memoria para el nodo");
+        exit(EXIT_FAILURE);
+    }
     node->type = BINARY_OP_NODE;
     node->binary_op.operator = operator;
     node->binary_op.left = left;
@@ -1844,6 +1888,10 @@ ASTNode *create_binary_op_node(char operator, ASTNode *left, ASTNode *right) {
 
 ASTNode *create_assignment_node(const char *name, ASTNode *value) {
     ASTNode *node = malloc(sizeof(ASTNode));
+    if (!node) {
+        perror("Error al asignar memoria para el nodo");
+        exit(EXIT_FAILURE);
+    }
     node->type = ASSIGNMENT_NODE;
     node->assignment.name = strdup(name);
     node->assignment.value = value;
@@ -1852,6 +1900,10 @@ ASTNode *create_assignment_node(const char *name, ASTNode *value) {
 
 ASTNode *create_if_node(ASTNode *condition, ASTNode *true_block) {
     ASTNode *node = malloc(sizeof(ASTNode));
+    if (!node) {
+        perror("Error al asignar memoria para el nodo");
+        exit(EXIT_FAILURE);
+    }
     node->type = IF_NODE;
     node->if_statement.condition = condition;
     node->if_statement.true_block = true_block;
@@ -1860,6 +1912,10 @@ ASTNode *create_if_node(ASTNode *condition, ASTNode *true_block) {
 
 ASTNode *create_print_node(ASTNode *expression) {
     ASTNode *node = malloc(sizeof(ASTNode));
+    if (!node) {
+        perror("Error al asignar memoria para el nodo");
+        exit(EXIT_FAILURE);
+    }
     node->type = PRINT_NODE;
     node->print_expression = expression;
     return node;
@@ -1867,6 +1923,10 @@ ASTNode *create_print_node(ASTNode *expression) {
 
 ASTNode *create_block_node(ASTNode **statements, int count) {
     ASTNode *node = malloc(sizeof(ASTNode));
+    if (!node) {
+        perror("Error al asignar memoria para el nodo");
+        exit(EXIT_FAILURE);
+    }
     node->type = BLOCK_NODE;
     node->block.statements = statements;
     node->block.count = count;
@@ -1906,71 +1966,61 @@ void free_ast(ASTNode *node) {
     free(node);
 }
 
-// Evaluación y ejecución del AST
-
+// Evaluación del AST (simplificada para este ejemplo)
 int evaluate_ast(ASTNode *node) {
     switch (node->type) {
         case NUMBER_NODE:
             return node->number_value;
         case IDENTIFIER_NODE:
             return get_variable_value(node->identifier_name);
-        case BINARY_OP_NODE:
+        case BINARY_OP_NODE: {
+            int left = evaluate_ast(node->binary_op.left);
+            int right = evaluate_ast(node->binary_op.right);
             switch (node->binary_op.operator) {
-                case '+':
-                    return evaluate_ast(node->binary_op.left) + evaluate_ast(node->binary_op.right);
-                case '-':
-                    return evaluate_ast(node->binary_op.left) - evaluate_ast(node->binary_op.right);
-                case '*':
-                    return evaluate_ast(node->binary_op.left) * evaluate_ast(node->binary_op.right);
-                case '/':
-                    return evaluate_ast(node->binary_op.left) / evaluate_ast(node->binary_op.right);
-                case '=':
-                    return evaluate_ast(node->binary_op.left) == evaluate_ast(node->binary_op.right);
-                case '!':
-                    return evaluate_ast(node->binary_op.left) != evaluate_ast(node->binary_op.right);
-                case '<':
-                    return evaluate_ast(node->binary_op.left) < evaluate_ast(node->binary_op.right);
-                case '>':
-                    return evaluate_ast(node->binary_op.left) > evaluate_ast(node->binary_op.right);
-                case 'l':
-                    return evaluate_ast(node->binary_op.left) <= evaluate_ast(node->binary_op.right);
-                case 'g':
-                    return evaluate_ast(node->binary_op.left) >= evaluate_ast(node->binary_op.right);
-                default:
-                    return 0;
+                case '+': return left + right;
+                case '-': return left - right;
+                case '*': return left * right;
+                case '/': return left / right;
+                case '=': set_variable_value(node->binary_op.left->identifier_name, right); return right;
+                default: return 0;
             }
-        case ASSIGNMENT_NODE:
-            set_variable_value(node->assignment.name, evaluate_ast(node->assignment.value));
-            return 0;
-        case IF_NODE:
-            if (evaluate_ast(node->if_statement.condition)) {
-                execute_ast(node->if_statement.true_block);
-            }
-            return 0;
-        case PRINT_NODE:
-            printf("%d\n", evaluate_ast(node->print_expression));
-            return 0;
-        case BLOCK_NODE:
-            for (int i = 0; i < node->block.count; i++) {
-                execute_ast(node->block.statements[i]);
-            }
-            return 0;
+        }
         default:
             return 0;
     }
 }
 
+// Ejecución del AST
 void execute_ast(ASTNode *node) {
-    evaluate_ast(node);  // Solo evaluamos y ejecutamos la lógica
+    if (!node) return;
+    switch (node->type) {
+        case PRINT_NODE:
+            printf("%d\n", evaluate_ast(node->print_expression));
+            break;
+        case ASSIGNMENT_NODE:
+            set_variable_value(node->assignment.name, evaluate_ast(node->assignment.value));
+            break;
+        case IF_NODE:
+            if (evaluate_ast(node->if_statement.condition)) {
+                execute_ast(node->if_statement.true_block);
+            }
+            break;
+        case BLOCK_NODE:
+            for (int i = 0; i < node->block.count; i++) {
+                execute_ast(node->block.statements[i]);
+            }
+            break;
+    }
 }
 
+// Manejo de variables
 int get_variable_value(const char *name) {
     for (int i = 0; i < variable_count; i++) {
         if (strcmp(variables[i].name, name) == 0) {
             return variables[i].value;
         }
     }
-    return 0;  // Devuelve 0 si la variable no se encuentra
+    return 0;
 }
 
 void set_variable_value(const char *name, int value) {
@@ -1980,25 +2030,10 @@ void set_variable_value(const char *name, int value) {
             return;
         }
     }
-    // Si no existe la variable, la creamos
-    variables[variable_count].name = strdup(name);
-    variables[variable_count].value = value;
-    variable_count++;
-}
-
-void yyerror(const char *s) {
-    fprintf(stderr, "Error: %s\n", s);
-}
-
-int main(int argc, char **argv) {
-    if (argc > 1) {
-        yyin = fopen(argv[1], "r");
-        if (!yyin) {
-            perror("No se puede abrir el archivo");
-            return 1;
-        }
+    if (variable_count < MAX_VARIABLES) {
+        variables[variable_count].name = strdup(name);
+        variables[variable_count].value = value;
+        variable_count++;
     }
-    yyparse();
-    return 0;
 }
 
