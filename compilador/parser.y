@@ -265,22 +265,23 @@ int evaluate_ast(ASTNode *node) {
                 execute_ast(node->block.statements[i]);
             }
             return 0;
-        default:
-            return 0;
     }
+    return 0;
 }
 
 void execute_ast(ASTNode *node) {
-    evaluate_ast(node);  // Solo evaluamos y ejecutamos la lógica
+    // En este ejemplo, la ejecución implica evaluar el AST y realizar las acciones necesarias
+    evaluate_ast(node);
 }
 
+// Funciones de manejo de variables
 int get_variable_value(const char *name) {
     for (int i = 0; i < variable_count; i++) {
         if (strcmp(variables[i].name, name) == 0) {
             return variables[i].value;
         }
     }
-    return 0;  // Devuelve 0 si la variable no se encuentra
+    return 0; // Valor por defecto si no se encuentra
 }
 
 void set_variable_value(const char *name, int value) {
@@ -290,24 +291,21 @@ void set_variable_value(const char *name, int value) {
             return;
         }
     }
-    // Si no existe la variable, la creamos
-    variables[variable_count].name = strdup(name);
-    variables[variable_count].value = value;
-    variable_count++;
+    if (variable_count < MAX_VARIABLES) {
+        variables[variable_count].name = strdup(name);
+        variables[variable_count].value = value;
+        variable_count++;
+    }
+}
+
+%%
+
+int main(void) {
+    yyin = stdin;
+    yyparse();
+    return 0;
 }
 
 void yyerror(const char *s) {
     fprintf(stderr, "Error: %s\n", s);
-}
-
-int main(int argc, char **argv) {
-    if (argc > 1) {
-        yyin = fopen(argv[1], "r");
-        if (!yyin) {
-            perror("No se puede abrir el archivo");
-            return 1;
-        }
-    }
-    yyparse();
-    return 0;
 }
