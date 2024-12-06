@@ -246,32 +246,33 @@ int evaluate_ast(ASTNode *node) {
                     return evaluate_ast(node->binary_op.left) <= evaluate_ast(node->binary_op.right);
                 case 'g':
                     return evaluate_ast(node->binary_op.left) >= evaluate_ast(node->binary_op.right);
+                default:
+                    return 0;
             }
+        case ASSIGNMENT_NODE:
+            set_variable_value(node->assignment.name, evaluate_ast(node->assignment.value));
+            return 0;
+        case IF_NODE:
+            if (evaluate_ast(node->if_statement.condition)) {
+                execute_ast(node->if_statement.true_block);
+            }
+            return 0;
+        case PRINT_NODE:
+            printf("%d\n", evaluate_ast(node->print_expression));
+            return 0;
+        case BLOCK_NODE:
+            for (int i = 0; i < node->block.count; i++) {
+                execute_ast(node->block.statements[i]);
+            }
+            return 0;
         default:
             return 0;
     }
 }
 
 void execute_ast(ASTNode *node) {
-    // Aquí debes implementar la ejecución de los nodos de acuerdo con su tipo.
-    switch (node->type) {
-        case ASSIGNMENT_NODE:
-            set_variable_value(node->assignment.name, evaluate_ast(node->assignment.value));
-            break;
-        case IF_NODE:
-            if (evaluate_ast(node->if_statement.condition)) {
-                execute_ast(node->if_statement.true_block);
-            }
-            break;
-        case PRINT_NODE:
-            printf("%d\n", evaluate_ast(node->print_expression));
-            break;
-        default:
-            break;
-    }
+    evaluate_ast(node);  // Solo evaluamos y ejecutamos la lógica
 }
-
-// Funciones para manejar variables
 
 int get_variable_value(const char *name) {
     for (int i = 0; i < variable_count; i++) {
@@ -279,7 +280,7 @@ int get_variable_value(const char *name) {
             return variables[i].value;
         }
     }
-    return 0; // Si no se encuentra la variable
+    return 0;  // Devuelve 0 si la variable no se encuentra
 }
 
 void set_variable_value(const char *name, int value) {
@@ -289,27 +290,24 @@ void set_variable_value(const char *name, int value) {
             return;
         }
     }
-    // Si no existe la variable, la agregamos
-    if (variable_count < MAX_VARIABLES) {
-        variables[variable_count].name = strdup(name);
-        variables[variable_count].value = value;
-        variable_count++;
-    }
+    // Si no existe la variable, la creamos
+    variables[variable_count].name = strdup(name);
+    variables[variable_count].value = value;
+    variable_count++;
 }
 
 void yyerror(const char *s) {
-    fprintf(stderr, "Error de sintaxis: %s\n", s);
+    fprintf(stderr, "Error: %s\n", s);
 }
 
 int main(int argc, char **argv) {
     if (argc > 1) {
         yyin = fopen(argv[1], "r");
         if (!yyin) {
-            fprintf(stderr, "Error opening file: %s\n", argv[1]);
+            perror("No se puede abrir el archivo");
             return 1;
         }
     }
-
     yyparse();
     return 0;
 }
