@@ -129,8 +129,9 @@ int evaluate_ast(ASTNode *node);
 void execute_ast(ASTNode *node);
 
 
+
 /* Line 189 of yacc.c  */
-#line 134 "parser.tab.c"
+#line 135 "parser.tab.c"
 
 /* Enabling traces.  */
 #ifndef YYDEBUG
@@ -183,7 +184,7 @@ typedef union YYSTYPE
 {
 
 /* Line 214 of yacc.c  */
-#line 61 "parser.y"
+#line 62 "parser.y"
 
     int ival;
     char *sval;
@@ -192,7 +193,7 @@ typedef union YYSTYPE
 
 
 /* Line 214 of yacc.c  */
-#line 196 "parser.tab.c"
+#line 197 "parser.tab.c"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
@@ -204,7 +205,7 @@ typedef union YYSTYPE
 
 
 /* Line 264 of yacc.c  */
-#line 208 "parser.tab.c"
+#line 209 "parser.tab.c"
 
 #ifdef short
 # undef short
@@ -497,9 +498,9 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    83,    83,    84,    88,    89,    90,    91,    95,    99,
-     102,   112,   113,   114,   115,   116,   117,   118,   119,   120,
-     121,   122,   123,   124
+       0,    84,    84,    85,    89,    90,    91,    92,    96,   100,
+     103,   113,   114,   115,   116,   117,   118,   119,   120,   121,
+     122,   123,   124,   125
 };
 #endif
 
@@ -1439,56 +1440,56 @@ yyreduce:
         case 2:
 
 /* Line 1455 of yacc.c  */
-#line 83 "parser.y"
+#line 84 "parser.y"
     { (yyval.node) = NULL; /* Asignar NULL en caso de que no haya contenido */ ;}
     break;
 
   case 3:
 
 /* Line 1455 of yacc.c  */
-#line 84 "parser.y"
+#line 85 "parser.y"
     { execute_ast((yyvsp[(2) - (2)].node)); free_ast((yyvsp[(2) - (2)].node)); ;}
     break;
 
   case 4:
 
 /* Line 1455 of yacc.c  */
-#line 88 "parser.y"
+#line 89 "parser.y"
     { (yyval.node) = create_assignment_node((yyvsp[(2) - (5)].sval), (yyvsp[(4) - (5)].node)); ;}
     break;
 
   case 5:
 
 /* Line 1455 of yacc.c  */
-#line 89 "parser.y"
+#line 90 "parser.y"
     { (yyval.node) = create_assignment_node((yyvsp[(1) - (4)].sval), (yyvsp[(3) - (4)].node)); ;}
     break;
 
   case 6:
 
 /* Line 1455 of yacc.c  */
-#line 90 "parser.y"
+#line 91 "parser.y"
     { (yyval.node) = create_if_node((yyvsp[(3) - (5)].node), (yyvsp[(5) - (5)].node)); ;}
     break;
 
   case 7:
 
 /* Line 1455 of yacc.c  */
-#line 91 "parser.y"
+#line 92 "parser.y"
     { (yyval.node) = create_print_node((yyvsp[(3) - (5)].node)); ;}
     break;
 
   case 8:
 
 /* Line 1455 of yacc.c  */
-#line 95 "parser.y"
+#line 96 "parser.y"
     { (yyval.node) = create_block_node((yyvsp[(2) - (3)].node)->block.statements, (yyvsp[(2) - (3)].node)->block.count); ;}
     break;
 
   case 9:
 
 /* Line 1455 of yacc.c  */
-#line 99 "parser.y"
+#line 100 "parser.y"
     {
         (yyval.node) = create_block_node((ASTNode **)&(yyvsp[(1) - (1)].node), 1);
     ;}
@@ -1497,7 +1498,7 @@ yyreduce:
   case 10:
 
 /* Line 1455 of yacc.c  */
-#line 102 "parser.y"
+#line 103 "parser.y"
     {
         int count = (yyvsp[(1) - (2)].node)->block.count + 1;
         (yyvsp[(1) - (2)].node)->block.statements = realloc((yyvsp[(1) - (2)].node)->block.statements, count * sizeof(ASTNode *));
@@ -1510,98 +1511,98 @@ yyreduce:
   case 11:
 
 /* Line 1455 of yacc.c  */
-#line 112 "parser.y"
+#line 113 "parser.y"
     { (yyval.node) = create_number_node((yyvsp[(1) - (1)].ival)); ;}
     break;
 
   case 12:
 
 /* Line 1455 of yacc.c  */
-#line 113 "parser.y"
+#line 114 "parser.y"
     { (yyval.node) = create_identifier_node((yyvsp[(1) - (1)].sval)); ;}
     break;
 
   case 13:
 
 /* Line 1455 of yacc.c  */
-#line 114 "parser.y"
+#line 115 "parser.y"
     { (yyval.node) = create_binary_op_node('+', (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node)); ;}
     break;
 
   case 14:
 
 /* Line 1455 of yacc.c  */
-#line 115 "parser.y"
+#line 116 "parser.y"
     { (yyval.node) = create_binary_op_node('-', (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node)); ;}
     break;
 
   case 15:
 
 /* Line 1455 of yacc.c  */
-#line 116 "parser.y"
+#line 117 "parser.y"
     { (yyval.node) = create_binary_op_node('*', (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node)); ;}
     break;
 
   case 16:
 
 /* Line 1455 of yacc.c  */
-#line 117 "parser.y"
+#line 118 "parser.y"
     { (yyval.node) = create_binary_op_node('/', (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node)); ;}
     break;
 
   case 17:
 
 /* Line 1455 of yacc.c  */
-#line 118 "parser.y"
+#line 119 "parser.y"
     { (yyval.node) = create_binary_op_node('=', (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node)); ;}
     break;
 
   case 18:
 
 /* Line 1455 of yacc.c  */
-#line 119 "parser.y"
+#line 120 "parser.y"
     { (yyval.node) = create_binary_op_node('!', (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node)); ;}
     break;
 
   case 19:
 
 /* Line 1455 of yacc.c  */
-#line 120 "parser.y"
+#line 121 "parser.y"
     { (yyval.node) = create_binary_op_node('<', (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node)); ;}
     break;
 
   case 20:
 
 /* Line 1455 of yacc.c  */
-#line 121 "parser.y"
+#line 122 "parser.y"
     { (yyval.node) = create_binary_op_node('>', (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node)); ;}
     break;
 
   case 21:
 
 /* Line 1455 of yacc.c  */
-#line 122 "parser.y"
+#line 123 "parser.y"
     { (yyval.node) = create_binary_op_node('l', (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node)); ;}
     break;
 
   case 22:
 
 /* Line 1455 of yacc.c  */
-#line 123 "parser.y"
+#line 124 "parser.y"
     { (yyval.node) = create_binary_op_node('g', (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node)); ;}
     break;
 
   case 23:
 
 /* Line 1455 of yacc.c  */
-#line 124 "parser.y"
+#line 125 "parser.y"
     { (yyval.node) = (yyvsp[(2) - (3)].node); ;}
     break;
 
 
 
 /* Line 1455 of yacc.c  */
-#line 1605 "parser.tab.c"
+#line 1606 "parser.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1813,15 +1814,188 @@ yyreturn:
 
 
 /* Line 1675 of yacc.c  */
-#line 127 "parser.y"
+#line 128 "parser.y"
 
 
-void yyerror(const char *s) {
-    fprintf(stderr, "Error: %s\n", s);
+// Implementación de las funciones para crear nodos del AST
+
+ASTNode *create_number_node(int value) {
+    ASTNode *node = malloc(sizeof(ASTNode));
+    node->type = NUMBER_NODE;
+    node->number_value = value;
+    return node;
 }
 
-int main(int argc, char *argv[]) {
-    yyin = argc > 1 ? fopen(argv[1], "r") : stdin;
+ASTNode *create_identifier_node(const char *name) {
+    ASTNode *node = malloc(sizeof(ASTNode));
+    node->type = IDENTIFIER_NODE;
+    node->identifier_name = strdup(name);
+    return node;
+}
+
+ASTNode *create_binary_op_node(char operator, ASTNode *left, ASTNode *right) {
+    ASTNode *node = malloc(sizeof(ASTNode));
+    node->type = BINARY_OP_NODE;
+    node->binary_op.operator = operator;
+    node->binary_op.left = left;
+    node->binary_op.right = right;
+    return node;
+}
+
+ASTNode *create_assignment_node(const char *name, ASTNode *value) {
+    ASTNode *node = malloc(sizeof(ASTNode));
+    node->type = ASSIGNMENT_NODE;
+    node->assignment.name = strdup(name);
+    node->assignment.value = value;
+    return node;
+}
+
+ASTNode *create_if_node(ASTNode *condition, ASTNode *true_block) {
+    ASTNode *node = malloc(sizeof(ASTNode));
+    node->type = IF_NODE;
+    node->if_statement.condition = condition;
+    node->if_statement.true_block = true_block;
+    return node;
+}
+
+ASTNode *create_print_node(ASTNode *expression) {
+    ASTNode *node = malloc(sizeof(ASTNode));
+    node->type = PRINT_NODE;
+    node->print_expression = expression;
+    return node;
+}
+
+ASTNode *create_block_node(ASTNode **statements, int count) {
+    ASTNode *node = malloc(sizeof(ASTNode));
+    node->type = BLOCK_NODE;
+    node->block.statements = statements;
+    node->block.count = count;
+    return node;
+}
+
+// Gestión de memoria del AST
+void free_ast(ASTNode *node) {
+    if (!node) return;
+    switch (node->type) {
+        case NUMBER_NODE:
+        case IDENTIFIER_NODE:
+            free(node->identifier_name);
+            break;
+        case BINARY_OP_NODE:
+            free_ast(node->binary_op.left);
+            free_ast(node->binary_op.right);
+            break;
+        case ASSIGNMENT_NODE:
+            free(node->assignment.name);
+            free_ast(node->assignment.value);
+            break;
+        case IF_NODE:
+            free_ast(node->if_statement.condition);
+            free_ast(node->if_statement.true_block);
+            break;
+        case PRINT_NODE:
+            free_ast(node->print_expression);
+            break;
+        case BLOCK_NODE:
+            for (int i = 0; i < node->block.count; i++) {
+                free_ast(node->block.statements[i]);
+            }
+            free(node->block.statements);
+            break;
+    }
+    free(node);
+}
+
+// Evaluación y ejecución del AST
+
+int evaluate_ast(ASTNode *node) {
+    switch (node->type) {
+        case NUMBER_NODE:
+            return node->number_value;
+        case IDENTIFIER_NODE:
+            return get_variable_value(node->identifier_name);
+        case BINARY_OP_NODE:
+            switch (node->binary_op.operator) {
+                case '+':
+                    return evaluate_ast(node->binary_op.left) + evaluate_ast(node->binary_op.right);
+                case '-':
+                    return evaluate_ast(node->binary_op.left) - evaluate_ast(node->binary_op.right);
+                case '*':
+                    return evaluate_ast(node->binary_op.left) * evaluate_ast(node->binary_op.right);
+                case '/':
+                    return evaluate_ast(node->binary_op.left) / evaluate_ast(node->binary_op.right);
+                case '=':
+                    return evaluate_ast(node->binary_op.left) == evaluate_ast(node->binary_op.right);
+                case '!':
+                    return evaluate_ast(node->binary_op.left) != evaluate_ast(node->binary_op.right);
+                case '<':
+                    return evaluate_ast(node->binary_op.left) < evaluate_ast(node->binary_op.right);
+                case '>':
+                    return evaluate_ast(node->binary_op.left) > evaluate_ast(node->binary_op.right);
+                case 'l':
+                    return evaluate_ast(node->binary_op.left) <= evaluate_ast(node->binary_op.right);
+                case 'g':
+                    return evaluate_ast(node->binary_op.left) >= evaluate_ast(node->binary_op.right);
+            }
+        default:
+            return 0;
+    }
+}
+
+void execute_ast(ASTNode *node) {
+    // Aquí debes implementar la ejecución de los nodos de acuerdo con su tipo.
+    switch (node->type) {
+        case ASSIGNMENT_NODE:
+            set_variable_value(node->assignment.name, evaluate_ast(node->assignment.value));
+            break;
+        case IF_NODE:
+            if (evaluate_ast(node->if_statement.condition)) {
+                execute_ast(node->if_statement.true_block);
+            }
+            break;
+        case PRINT_NODE:
+            printf("%d\n", evaluate_ast(node->print_expression));
+            break;
+        default:
+            break;
+    }
+}
+
+// Funciones para manejar variables
+
+int get_variable_value(const char *name) {
+    for (int i = 0; i < variable_count; i++) {
+        if (strcmp(variables[i].name, name) == 0) {
+            return variables[i].value;
+        }
+    }
+    return 0; // Si no se encuentra la variable
+}
+
+void set_variable_value(const char *name, int value) {
+    for (int i = 0; i < variable_count; i++) {
+        if (strcmp(variables[i].name, name) == 0) {
+            variables[i].value = value;
+            return;
+        }
+    }
+    // Si no existe la variable, la agregamos
+    if (variable_count < MAX_VARIABLES) {
+        variables[variable_count].name = strdup(name);
+        variables[variable_count].value = value;
+        variable_count++;
+    }
+}
+
+int main(int argc, char **argv) {
+    if (argc > 1) {
+        yyin = fopen(argv[1], "r");
+        if (!yyin) {
+            fprintf(stderr, "Error opening file: %s\n", argv[1]);
+            return 1;
+        }
+    }
+
     yyparse();
     return 0;
 }

@@ -65,7 +65,7 @@ typedef union YYSTYPE
 {
 
 /* Line 1676 of yacc.c  */
-#line 61 "parser.y"
+#line 62 "parser.y"
 
     int ival;
     char *sval;
