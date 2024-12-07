@@ -12,7 +12,6 @@
 "else"        { return ELSE; }
 "true"        { return TRUE; }
 "false"       { return FALSE; }
-[0-9]+\.[0-9]+  { yylval.fval = atof(yytext); return FLOAT; }
 [0-9]+        { yylval.ival = atoi(yytext); return NUMBER; }
 [a-zA-Z_][a-zA-Z_0-9]*   { yylval.sval = strdup(yytext); return IDENTIFIER; }
 "=="          { return EQUAL; }

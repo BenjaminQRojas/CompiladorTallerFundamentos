@@ -192,15 +192,12 @@ int evaluate_ast(ASTNode *node) {
 
     switch (node->type) {
         case NODE_TYPE_NUMBER:
-            // printf("Evaluando numero: %d\n", node->value); Debugging
             return node->value;
         case NODE_TYPE_IDENTIFIER:
-           // printf("Evaluando identificador: %s\n", node->name); Debugging
             return get_variable_value(node->name);
         case NODE_TYPE_BINARY_OP: {
             int left_value = evaluate_ast(node->binary_op.left);
             int right_value = evaluate_ast(node->binary_op.right);
-            printf("Evaluando operacion binaria: %d %c %d\n", left_value, node->binary_op.op, right_value); // Debugging
             switch (node->binary_op.op) {
                 case '+': return left_value + right_value;
                 case '-': return left_value - right_value;
@@ -225,7 +222,6 @@ void execute_ast(ASTNode *node) {
 
     switch (node->type) {
         case NODE_TYPE_ASSIGNMENT:
-            // printf("Ejecutando asignacion\n"); Debugging
             set_variable_value(node->assignment.name, evaluate_ast(node->assignment.value));
             break;
         case NODE_TYPE_IF:
@@ -279,7 +275,6 @@ void execute_ast(ASTNode *node) {
 program:
     /* vacío */ { /* No AST is created for an empty program */ }
     | program line { 
-       // printf("Ejecutando una linea del programa\n");  Debugging
         execute_ast($2); 
         free_ast($2); 
     }
