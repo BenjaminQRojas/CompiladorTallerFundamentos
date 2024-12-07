@@ -3,61 +3,68 @@
 #include <stdlib.h>
 #include <string.h>
 
+// Declaración externa de la función yyin (archivo de entrada) y otras funciones necesarias
 extern FILE *yyin;
 void yyerror(const char *s);
 int yylex(void);
 
+// Estructura que representa una variable
 typedef struct {
-    char *name;
-    int value;
+    char *name;  // Nombre de la variable
+    int value;   // Valor de la variable
 } Variable;
 
-Variable variables[100];
-int var_count = 0;
+Variable variables[100];  // Arreglo para almacenar variables
+int var_count = 0;        // Contador de variables
 
+// Definición de tipos de nodos para el AST
 typedef enum { 
-    NODE_TYPE_NUMBER, 
-    NODE_TYPE_IDENTIFIER, 
-    NODE_TYPE_BINARY_OP, 
-    NODE_TYPE_ASSIGNMENT, 
-    NODE_TYPE_IF, 
-    NODE_TYPE_ELSE,
-    NODE_TYPE_PRINT,
-    NODE_TYPE_BLOCK,
-    NODE_TYPE_WHILE 
+    NODE_TYPE_NUMBER,         // Nodo para números
+    NODE_TYPE_IDENTIFIER,     // Nodo para identificadores
+    NODE_TYPE_BINARY_OP,      // Nodo para operaciones binarias
+    NODE_TYPE_ASSIGNMENT,     // Nodo para asignaciones
+    NODE_TYPE_IF,             // Nodo para la sentencia if
+    NODE_TYPE_ELSE,           // Nodo para la sentencia else
+    NODE_TYPE_PRINT,          // Nodo para la sentencia print
+    NODE_TYPE_BLOCK,          // Nodo para bloques de código
+    NODE_TYPE_WHILE           // Nodo para la sentencia while
 } NodeType;
 
+// Estructura del nodo AST
 typedef struct ASTNode {
-    NodeType type;
+    NodeType type;  // Tipo del nodo (de la enumeración NodeType)
     union {
-        int value;  // NODE_TYPE_NUMBER
-        char *name;  // NODE_TYPE_IDENTIFIER
-        struct {  // NODE_TYPE_BINARY_OP
+        int value;  // Valor de tipo int (para números)
+        char *name;  // Nombre del identificador (para variables)
+        struct {     // Estructura para la operación binaria
             struct ASTNode *left;
             struct ASTNode *right;
-            char op;
+            char op;  // Operador de la operación (por ejemplo, '+', '-', etc.)
         } binary_op;
-        struct {  // NODE_TYPE_ASSIGNMENT
+        struct {     // Estructura para la asignación
             char *name;
             struct ASTNode *value;
         } assignment;
-        struct {  // NODE_TYPE_IF
+        struct {     // Estructura para la sentencia if
             struct ASTNode *condition;
             struct ASTNode *true_block;
             struct ASTNode *false_block;
         } if_stmt;
-        struct ASTNode *expression;  // NODE_TYPE_PRINT
-        struct {  // NODE_TYPE_BLOCK
-            struct ASTNode **statements;
-            int statement_count;
+        struct ASTNode *expression;  // Nodo para la expresión de print
+        struct {     // Estructura para bloques de código
+            struct ASTNode **statements;  // Lista de sentencias en el bloque
+            int statement_count;          // Contador de sentencias
         } block;
-        struct {  // NODE_TYPE_WHILE
+        struct {     // Estructura para la sentencia while
             struct ASTNode *condition;
             struct ASTNode *block;
         } while_stmt;
     };
 } ASTNode;
 
+// Funciones para crear nodos AST
+
+// Crea un nodo de número
 ASTNode *create_number_node(int value) {
     ASTNode *node = (ASTNode *)malloc(sizeof(ASTNode));
     node->type = NODE_TYPE_NUMBER;
@@ -65,6 +72,7 @@ ASTNode *create_number_node(int value) {
     return node;
 }
 
+// Crea un nodo de identificador (variable)
 ASTNode *create_identifier_node(char *name) {
     ASTNode *node = (ASTNode *)malloc(sizeof(ASTNode));
     node->type = NODE_TYPE_IDENTIFIER;
@@ -72,6 +80,7 @@ ASTNode *create_identifier_node(char *name) {
     return node;
 }
 
+// Crea un nodo para una operación binaria (por ejemplo, suma, resta)
 ASTNode *create_binary_op_node(char op, ASTNode *left, ASTNode *right) {
     ASTNode *node = (ASTNode *)malloc(sizeof(ASTNode));
     node->type = NODE_TYPE_BINARY_OP;
@@ -81,6 +90,7 @@ ASTNode *create_binary_op_node(char op, ASTNode *left, ASTNode *right) {
     return node;
 }
 
+// Crea un nodo de asignación (variable = valor)
 ASTNode *create_assignment_node(char *name, ASTNode *value) {
     ASTNode *node = (ASTNode *)malloc(sizeof(ASTNode));
     node->type = NODE_TYPE_ASSIGNMENT;
@@ -89,6 +99,7 @@ ASTNode *create_assignment_node(char *name, ASTNode *value) {
     return node;
 }
 
+// Crea un nodo para una sentencia if
 ASTNode *create_if_node(ASTNode *condition, ASTNode *true_block, ASTNode *false_block) {
     ASTNode *node = (ASTNode *)malloc(sizeof(ASTNode));
     node->type = NODE_TYPE_IF;
@@ -98,6 +109,7 @@ ASTNode *create_if_node(ASTNode *condition, ASTNode *true_block, ASTNode *false_
     return node;
 }
 
+// Crea un nodo para una sentencia else
 ASTNode *create_else_node(ASTNode *false_block) {
     ASTNode *node = (ASTNode *)malloc(sizeof(ASTNode));
     node->type = NODE_TYPE_ELSE;
@@ -105,6 +117,7 @@ ASTNode *create_else_node(ASTNode *false_block) {
     return node;
 }
 
+// Crea un nodo para una sentencia print
 ASTNode *create_print_node(ASTNode *expression) {
     ASTNode *node = (ASTNode *)malloc(sizeof(ASTNode));
     node->type = NODE_TYPE_PRINT;
@@ -112,6 +125,7 @@ ASTNode *create_print_node(ASTNode *expression) {
     return node;
 }
 
+// Crea un nodo para un bloque de código
 ASTNode *create_block_node(ASTNode **statements, int count) {
     ASTNode *node = (ASTNode *)malloc(sizeof(ASTNode));
     node->type = NODE_TYPE_BLOCK;
@@ -120,6 +134,7 @@ ASTNode *create_block_node(ASTNode **statements, int count) {
     return node;
 }
 
+// Crea un nodo para una sentencia while
 ASTNode *create_while_node(ASTNode *condition, ASTNode *block) {
     ASTNode *node = (ASTNode *)malloc(sizeof(ASTNode));
     node->type = NODE_TYPE_WHILE;
@@ -128,6 +143,7 @@ ASTNode *create_while_node(ASTNode *condition, ASTNode *block) {
     return node;
 }
 
+// Función para liberar memoria de los nodos del AST
 void free_ast(ASTNode *node) {
     if (node == NULL) return;
     switch (node->type) {
@@ -166,6 +182,7 @@ void free_ast(ASTNode *node) {
     free(node);
 }
 
+// Funciones para obtener y asignar valores a las variables
 int get_variable_value(char *name) {
     for (int i = 0; i < var_count; i++) {
         if (strcmp(variables[i].name, name) == 0) {
@@ -174,6 +191,7 @@ int get_variable_value(char *name) {
     }
     return 0;
 }
+
 
 void set_variable_value(char *name, int value) {
     for (int i = 0; i < var_count; i++) {
@@ -187,6 +205,7 @@ void set_variable_value(char *name, int value) {
     var_count++;
 }
 
+// Evaluar el AST
 int evaluate_ast(ASTNode *node) {
     if (node == NULL) return 0;
 
@@ -217,6 +236,7 @@ int evaluate_ast(ASTNode *node) {
     }
 }
 
+// Ejecutar el AST
 void execute_ast(ASTNode *node) {
     if (node == NULL) return;
 
